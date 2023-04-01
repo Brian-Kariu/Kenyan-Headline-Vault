@@ -1,0 +1,15 @@
+{
+  "name": "kenyan-headline-vault",
+  "version": "0.0.1",
+  "description": "Kenyan News Archiving Website.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "puppeteer": "^19.8.2"
+  }
+}
