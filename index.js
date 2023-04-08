@@ -1,17 +1,17 @@
 const express = require("express");
-const scraper = require('./scraper/index')
+const scraperRoutes = require("./app/scraper");
 const app = express();
 const port = 4000;
+
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use("/scrape", scraperRoutes.scraperRoute);
 
 app.get("/", (req, res) => {
   res.sendFile("index.html", { root: __dirname });
 });
 
-// GET method route
-app.get("/scrape", (req, res) => {
-  scraper();
-});
-
+// Start the server
 app.listen(port, () => {
-  console.log(`Now listening on port ${port}`);
+  console.log(`App running on port ${port}...`);
 });
