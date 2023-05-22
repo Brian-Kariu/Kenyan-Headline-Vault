@@ -166,3 +166,6 @@ dist
 # Project specific
 # Puppeteer
 /downloads
+
+#GCP
+creds.json
