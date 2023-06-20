@@ -13,57 +13,57 @@ class Article {
   }
 
   /**
- * TODO: Placeholder comment for eslint JSDOC, replace later
- * @param {string}title Title
- */
+   * TODO: Placeholder comment for eslint JSDOC, replace later
+   * @param {string}title Title
+   */
   setTitle(title) {
     this.title = title;
   }
 
   /**
- * TODO: Placeholder comment for eslint JSDOC, replace later
- * @param {string}paragraph Title
- */
+   * TODO: Placeholder comment for eslint JSDOC, replace later
+   * @param {string}paragraph Title
+   */
   setParagraph(paragraph) {
     this.paragraph = paragraph;
   }
 
   /**
- * TODO: Placeholder comment for eslint JSDOC, replace later
- * @param {string}link Title
- */
+   * TODO: Placeholder comment for eslint JSDOC, replace later
+   * @param {string}link Title
+   */
   setLink(link) {
     this.link = link;
   }
 
   /**
- * TODO: Placeholder comment for eslint JSDOC, replace later
- * @param {string}imageUrl Title
- */
+   * TODO: Placeholder comment for eslint JSDOC, replace later
+   * @param {string}imageUrl Title
+   */
   setImageUrl(imageUrl) {
     this.imageUrl = imageUrl;
   }
 
   /**
- * TODO: Placeholder comment for eslint JSDOC, replace later
- * @param {string}imageCaption Title
- */
+   * TODO: Placeholder comment for eslint JSDOC, replace later
+   * @param {string}imageCaption Title
+   */
   setImageCaption(imageCaption) {
     this.imageCaption = imageCaption;
   }
 
   /**
- * TODO: Placeholder comment for eslint JSDOC, replace later
- * @param {string}topic Title
- */
+   * TODO: Placeholder comment for eslint JSDOC, replace later
+   * @param {string}topic Title
+   */
   setTopic(topic) {
     this.topic = topic;
   }
 
   /**
- * TODO: Placeholder comment for eslint JSDOC, replace later
- * @param {string}date Title
- */
+   * TODO: Placeholder comment for eslint JSDOC, replace later
+   * @param {string}date Title
+   */
   setDate(date) {
     this.date = date;
   }

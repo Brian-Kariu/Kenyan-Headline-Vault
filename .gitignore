@@ -165,6 +165,8 @@ dist
 
 # Project specific
 # Puppeteer
+
+# Scraper
 /downloads
 
 #GCP
