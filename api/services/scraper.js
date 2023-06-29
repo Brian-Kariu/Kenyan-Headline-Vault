@@ -1,21 +1,28 @@
 const Article = require("../models/scraper.model");
-const puppeteer = require("puppeteer");
-const DOWNLOAD_PATH = "./downloads";
+const puppeteer = require("puppeteer-core");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 
+const app = initializeApp();
+const db = getFirestore(app);
+db.settings({ ignoreUndefinedProperties: true })
+const fs = require("fs")
+const { join } = require('path');
+require("dotenv").config();
+
+const DOWNLOAD_PATH = join(__dirname, "../../public/downloads");
 async function scrapeSite() {
   try {
+    if (!fs.existsSync("/opt/public/downloads/nation") && process.env.NODENV == "production") {
+      fs.mkdirSync("/opt/public/downloads/nation");
+    }
     const browser = await puppeteer.launch({
-      headless: "true",
+      headless: "false",
+      executablePath: process.env.NODENV == "production" ? "/opt/google/chrome/google-chrome" : "/opt/google/chrome/chrome",
       args: [
-        "--disable-gpu",
-        "--disable-setuid-sandbox",
-        "--timeout=30000",
         "--no-sandbox",
-        "--no-zygote",
-        "--single-process",
-        `--download.default_directory=${DOWNLOAD_PATH}`,
-      ],
-      executablePath: '/usr/bin/google-chrome',
+        `--download.default_directory=${DOWNLOAD_PATH}`
+      ]
     });
     const page = await browser.newPage();
     await page.goto("https://nation.africa/kenya");
@@ -29,22 +36,24 @@ async function scrapeSite() {
     const headlines = [];
 
     const articles = await page.$$("article");
+    const links = await page.$$eval('a', links => {
+      return links.map(link => link.href);
+    });
     for (const article of articles) {
       const pageArticle = new Article();
       const title = await article.$eval("h3", (el) => el.innerText);
-      const image = await article.$eval("img", (el) => el.src);
-      const aside = await article.$eval("aside", (el) => el.innerText);
-      const link = await page.$eval(
-        `a[aria-label*="${title}"]`,
-        (el) => el.href
-      );
-      const paragraph = await article.$eval("p", (el) => el.innerText);
+      const image = undefined;
+      const aside = undefined;
+      const link = links[title.replace(/\s+/g, "-").toLowerCase()];
+      const paragraph = undefined;
       pageArticle.setTitle(title);
       pageArticle.setParagraph(paragraph);
       pageArticle.setImageUrl(image);
       pageArticle.setLink(link);
       pageArticle.setImageCaption(aside);
-      headlines.push(pageArticle);
+      // headlines.push(pageArticle);
+      console.log("pageArticle", pageArticle);
+      await UploadToFirebase(pageArticle);
     }
     await browser.close();
     return headlines;
@@ -56,4 +65,13 @@ async function scrapeSite() {
   }
 }
 
+async function UploadToFirebase(article) {
+  console.log("Article", article);
+  await db.collection("headlines")
+    .add(article.getArticle())
+    .then((result) => {
+      // Send back a message that we've successfully written the message
+      return { result: `Message with ID: ${result} added.` };
+    });
+}
 module.exports = scrapeSite;
