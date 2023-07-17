@@ -70,14 +70,14 @@ class Article {
 
   getArticle() {
     const article = {
-      "title": this.title,
-      "paragraph": this.paragraph,
-      "imageUrl": this.imageUrl,
-      "imageCaption": this.imageCaption,
-      "topic": this.topic,
-      "date": this.date,
-      "link": this.link
-    }
+      title: this.title,
+      paragraph: this.paragraph,
+      imageUrl: this.imageUrl,
+      imageCaption: this.imageCaption,
+      topic: this.topic,
+      date: this.date,
+      link: this.link,
+    };
     return article;
   }
 }

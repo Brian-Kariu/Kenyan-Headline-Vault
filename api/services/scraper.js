@@ -1,77 +1,96 @@
-const Article = require("../models/scraper.model");
 const puppeteer = require("puppeteer-core");
-const { initializeApp } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
+const { MongoClient } = require("mongodb");
+const scrapeNation = require("./nation");
+// const mongoClient = require("../../middleware/db_connection")
 
-const app = initializeApp();
-const db = getFirestore(app);
-db.settings({ ignoreUndefinedProperties: true })
-const fs = require("fs")
-const { join } = require('path');
+const fs = require("fs");
+const { join } = require("path");
 require("dotenv").config();
 
-const DOWNLOAD_PATH = join(__dirname, "../../public/downloads");
-async function scrapeSite() {
-  try {
-    if (!fs.existsSync("/opt/public/downloads/nation") && process.env.NODENV == "production") {
-      fs.mkdirSync("/opt/public/downloads/nation");
-    }
-    const browser = await puppeteer.launch({
-      headless: "false",
-      executablePath: process.env.NODENV == "production" ? "/opt/google/chrome/google-chrome" : "/opt/google/chrome/chrome",
-      args: [
-        "--no-sandbox",
-        `--download.default_directory=${DOWNLOAD_PATH}`
-      ]
-    });
-    const page = await browser.newPage();
-    await page.goto("https://nation.africa/kenya");
-    /**
-     * Get a screenshot of the entire page
-     */
-    await page.screenshot({
-      path: `${DOWNLOAD_PATH}/nation/nation-homepage.png`,
-      fullPage: true,
-    });
-    const headlines = [];
+const DB_NAME = process.env.DB_NAME;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
-    const articles = await page.$$("article");
-    const links = await page.$$eval('a', links => {
-      return links.map(link => link.href);
-    });
-    for (const article of articles) {
-      const pageArticle = new Article();
-      const title = await article.$eval("h3", (el) => el.innerText);
-      const image = undefined;
-      const aside = undefined;
-      const link = links[title.replace(/\s+/g, "-").toLowerCase()];
-      const paragraph = undefined;
-      pageArticle.setTitle(title);
-      pageArticle.setParagraph(paragraph);
-      pageArticle.setImageUrl(image);
-      pageArticle.setLink(link);
-      pageArticle.setImageCaption(aside);
-      // headlines.push(pageArticle);
-      console.log("pageArticle", pageArticle);
-      await UploadToFirebase(pageArticle);
+const uri = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_NAME}.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri);
+
+const DOWNLOAD_PATH = join(__dirname, "../../public/downloads");
+async function getBrowser() {
+  const browser = await puppeteer.launch({
+    headless: "false",
+    executablePath:
+      process.env.NODENV == "production"
+        ? "/opt/google/chrome/google-chrome"
+        : "/opt/google/chrome/chrome",
+    args: ["--no-sandbox", `--download.default_directory=${DOWNLOAD_PATH}`],
+  });
+  return browser;
+}
+
+async function checkIndex(articles) {
+  try {
+    // TODO: Rewrite this to handle different sources i.e nation, standard
+    console.log("Indexing new articles...");
+    const links = [];
+    const indexedArticles = [];
+    const db = client.db("nation-db");
+    const linkIndex = db.collection("link-index");
+    for (article in articles) {
+      const currentArticleInstance = articles[article];
+      const currentLinkIndex = await linkIndex.findOne({
+        link: currentArticleInstance["link"],
+      });
+      if (currentLinkIndex == undefined) {
+        links.push({
+          link: `https://nation.africa${currentArticleInstance["link"]}`,
+        });
+        indexedArticles.push(currentArticleInstance);
+      }
     }
-    await browser.close();
-    return headlines;
+    const options = { ordered: true };
+    await linkIndex.insertMany(links, options);
+    return indexedArticles;
   } catch (err) {
-    if ('failed to find element matching selector "img"' in err) {
-      console.log(err);
-    }
-    return err;
+    console.log(err);
   }
 }
 
-async function UploadToFirebase(article) {
-  console.log("Article", article);
-  await db.collection("headlines")
-    .add(article.getArticle())
-    .then((result) => {
-      // Send back a message that we've successfully written the message
-      return { result: `Message with ID: ${result} added.` };
-    });
+async function scrapeSite() {
+  try {
+    if (
+      !fs.existsSync("/opt/public/downloads/nation") &&
+      process.env.NODENV == "production"
+    ) {
+      fs.mkdirSync("/opt/public/downloads/nation");
+    }
+    const browser = getBrowser();
+    const nationData = await scrapeNation(browser);
+    await checkIndex(nationData);
+    await UploadToDB(nationData);
+    await browser.close();
+    return headlines;
+  } catch (err) {
+    if ("failed to find element matching selector" in err) {
+      console.log("Skipping element for article...");
+    } else {
+      return err;
+    }
+  }
+}
+
+async function UploadToDB(articles) {
+  try {
+    console.log("Successfully connected to Atlas!");
+    const db = client.db("nation-db");
+    const headlines = db.collection("headlines");
+    const options = { ordered: true };
+    console.log("Inserting to MongoDB...");
+    const result = await headlines.insertMany(articles, options);
+    console.log(`${result.insertedCount} documents were inserted`);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await client.close();
+  }
 }
 module.exports = scrapeSite;

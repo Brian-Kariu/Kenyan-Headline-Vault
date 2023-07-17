@@ -8,7 +8,7 @@ const scrapeSite = require("../services/scraper");
 async function getData() {
   console.log("Scraping beginning...");
   const scrapedData = await scrapeSite();
-  console.log("Scraped Data: ", scrapedData);
+  console.log("Scraping complete");
   //TODO: Move this to its own function
   // Push the new message into Firestore using the Firebase Admin SDK.
   // for (article in scrapedData) {
