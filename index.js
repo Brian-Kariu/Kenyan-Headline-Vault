@@ -1,17 +1,14 @@
 const express = require("express");
-const scraperRoutes = require("./app/scraper");
 const app = express();
-const port = 4000;
+const connectDB = require("./api/config/db_conn");
+const scraperRoutes = require("./api/routes/scraper.routes");
+const PORT = process.env.PORT || 4000;
 
-app.use(express.urlencoded({ extended: true }))
+connectDB();
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/scrape", scraperRoutes.scraperRoute);
+app.use("/scrape", scraperRoutes);
 
-app.get("/", (req, res) => {
-  res.sendFile("index.html", { root: __dirname });
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`App running on port ${port}...`);
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
 });

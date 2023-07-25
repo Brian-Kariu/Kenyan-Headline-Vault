@@ -1,0 +1,21 @@
+name: Hit KNV scrape endpoint
+
+on:
+  schedule:
+    - cron: "* */16 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scrape KNV
+        id: scrapeRequest
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.PROD_URL }}
+          method: "GET"
+      - name: Show Response
+        run: |
+          echo ${{ steps.scrapeRequest.outputs.response }}
+          echo ${{ steps.scrapeRequest.outputs.headers }}
+          echo ${{ fromJson(steps.scrapeRequest.outputs.response)}}

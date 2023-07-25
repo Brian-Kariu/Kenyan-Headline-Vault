@@ -142,6 +142,7 @@ dist
 .svelte-kit
 
 ### VisualStudioCode ###
+.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -164,4 +165,9 @@ dist
 
 # Project specific
 # Puppeteer
+
+# Scraper
 /downloads
+
+#GCP
+creds.json
