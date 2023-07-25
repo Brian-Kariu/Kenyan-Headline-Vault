@@ -16,6 +16,7 @@ jobs:
         with:
           url: "https://khv-api-dev.onrender.com/scrape"
           method: "GET"
+          timeout: 300000
       - name: Show Response
         run: |
           echo ${{ steps.scrapeRequest.outputs.response }}
