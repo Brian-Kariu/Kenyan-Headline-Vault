@@ -1,4 +1,4 @@
-name: Hit KNV scrape endpoint
+name: Hit KHV scrape endpoint
 
 on:
   push:
@@ -10,11 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Scrape KNV
+      - name: Scrape KHV
         id: scrapeRequest
         uses: fjogeleit/http-request-action@v1
         with:
-          url: ${{ secrets.PROD_URL }}
+          url: "https://khv-api-dev.onrender.com/scrape"
           method: "GET"
       - name: Show Response
         run: |
