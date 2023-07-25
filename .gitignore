@@ -167,7 +167,7 @@ dist
 # Puppeteer
 
 # Scraper
-/downloads
+**/nation/*.png
 
 #GCP
 creds.json
