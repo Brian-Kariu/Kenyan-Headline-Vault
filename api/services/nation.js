@@ -6,7 +6,7 @@ async function scrapeNation(browser) {
   await page.goto("https://nation.africa/kenya");
   getScreenshot(page);
   await scrapeHeadlinesPage(page);
-  console.log("   Nation Africa scraped Successful.");
+  return console.log("   Nation Africa scraped Successful.");
 }
 
 async function scrapeHeadlinesPage(page) {
