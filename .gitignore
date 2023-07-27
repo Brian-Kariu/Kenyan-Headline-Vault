@@ -171,3 +171,7 @@ dist
 
 #GCP
 creds.json
+
+# Config
+*.env
+.env.*
