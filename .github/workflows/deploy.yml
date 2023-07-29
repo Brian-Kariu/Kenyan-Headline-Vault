@@ -1,0 +1,22 @@
+name: Deploy to prod
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        id: deployHook
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.DEPLOY_HOOK }}
+          method: "GET"
+          timeout: 300000
+      - name: Show Response
+        run: |
+          echo ${{ steps.deployHook.outputs.response }}
+          echo ${{ steps.deployHook.outputs.headers }}
+          echo ${{ fromJson(steps.deployHook.outputs.response)}}

@@ -2,12 +2,12 @@ name: Hit KHV scrape endpoint
 
 on:
   push:
-      branches: [ master ]
+    branches: [master]
   schedule:
     - cron: "* */6 * * *"
 
 jobs:
-  build:
+  scrape:
     runs-on: ubuntu-latest
     steps:
       - name: Scrape KHV
