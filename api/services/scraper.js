@@ -20,6 +20,7 @@ async function getBrowser() {
 
 async function scrapeSite() {
   console.log("Scraping beginning...");
+  // TODO: Clean up this code.
   try {
     if (
       !fs.existsSync("/opt/public/downloads/nation") &&
@@ -28,14 +29,17 @@ async function scrapeSite() {
       fs.mkdirSync("/opt/public/downloads/nation");
     }
     const browser = getBrowser();
-    await scrapeNation(browser);
-    await browser.close();
-    return console.log("Scraping complete");
+    await scrapeNation(browser).then((response) => {
+      return response;
+    });
+    browser.then((browser) => {
+      browser.close();
+    });
   } catch (err) {
     if ("failed to find element matching selector" in err) {
-      console.log("Skipping element for article...");
+      throw new Error("Skipping element for article...");
     } else {
-      return err;
+      throw new Error(err);
     }
   }
 }
