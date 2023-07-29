@@ -13,6 +13,8 @@ module.exports = {
   MONGODB: process.env.MONGODB,
   DB_NAME: process.env.DB_NAME || "test",
   DB_USER: process.env.DB_USER,
+  AUTH_AUDIENCE: process.env.AUTH_AUDIENCE,
+  AUTH_URL: process.env.AUTH_URL,
   DB_PASSWORD: process.env.DB_PASSWORD,
   PORT: process.env.PORT,
 };
