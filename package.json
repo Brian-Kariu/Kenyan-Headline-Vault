@@ -11,16 +11,15 @@
     "prettier:fix": "npm run prettier -- --write",
     "format": "npm run prettier:fix && npm run lint:fix",
     "start": "node index.js",
-    "serve": "nodemon",
-    "serve:inspect": "nodemon --inspect ./index.js 4000"
+    "start:dev": "NODE_ENV=development nodemon index.js",
+    "serve": "NODE_ENV=development nodemon",
+    "serve:inspect": "NODE_ENV=development nodemon --inspect ./index.js 4000"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "firebase-admin": "^11.8.0",
-    "firebaseui": "^6.0.2",
     "mongodb": "^5.7.0",
     "mongoose": "^7.4.0",
     "puppeteer": "^20.5.0"
@@ -29,6 +28,7 @@
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8"
   }
