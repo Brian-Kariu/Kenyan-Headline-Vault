@@ -35,6 +35,8 @@ async function scrapeSite() {
     browser.then((browser) => {
       browser.close();
     });
+    console.log("Scraping completed.");
+    return { message: "scraping successful" };
   } catch (err) {
     if ("failed to find element matching selector" in err) {
       throw new Error("Skipping element for article...");
