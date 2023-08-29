@@ -29,12 +29,11 @@ let corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(jwtCheck);
 app.use(morgan(customLogFormat));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/scrape", scraperRoutes);
-app.use("/headlines", headlinesRoutes);
+app.use("/headlines", jwtCheck, headlinesRoutes);
 app.use(ErrorHandler);
 
 app.listen(PORT, () => {
