@@ -19,11 +19,23 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
+      - name: Authenticate
+        id: authRequest
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{secrets.AUTH_URL}}
+          data: '{
+            "email": "${{secrets.DEPLOY_EMAIL}}",
+            "password": "${{secrets.DEPLOY_PASSWORD}}",
+            }'
+          method: "POST"
+          timeout: 300000
       - name: Scrape KHV
         id: scrapeRequest
         uses: fjogeleit/http-request-action@v1
         with:
           url: "https://khv-api-dev.onrender.com/scrape"
+          bearerToken: ${{ fromJson(steps.authRequest.outputs.response).token}}
           method: "GET"
           timeout: 300000
       - name: Show Response
